@@ -49,10 +49,11 @@ jobs:
           cp "$ORIGINAL_ISO_PATH" "$FINAL_ISO_PATH"
           echo "Copied and renamed ISO to $FINAL_ISO_PATH"
           echo "iso_path=$FINAL_ISO_PATH" >> "$GITHUB_OUTPUT"
+          echo "short_commit=$SHORT_COMMIT" >> "$GITHUB_OUTPUT"
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
-          name: my-iso-output
+          name: Repairis-${{ steps.find_iso.outputs.short_commit }}
           path: ${{ steps.find_iso.outputs.iso_path }}
           retention-days: 7
