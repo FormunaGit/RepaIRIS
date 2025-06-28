@@ -12,8 +12,6 @@ on:
 jobs:
   build-iso:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # To allow creating a release
 
     steps:
       - name: Checkout repository
@@ -59,10 +57,3 @@ jobs:
           name: Repairis-${{ steps.find_iso.outputs.short_commit }}
           path: ${{ steps.find_iso.outputs.iso_path }}
           retention-days: 7
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v${{ steps.find_iso.outputs.short_commit }}
-          name: Repairis Release ${{ steps.find_iso.outputs.short_commit }}
-          files: ${{ steps.find_iso.outputs.iso_path }}
