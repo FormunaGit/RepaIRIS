@@ -34,9 +34,9 @@ jobs:
       - name: Find ISO file
         id: find_iso
         run: |
-          ISO_FILE=$(find ./result/iso -name "*.iso" -print -quit)
+          ISO_FILE=$(find ./result -name "*.iso" -print -quit)
           if [ -z "$ISO_FILE" ]; then
-            echo "Error: ISO file not found in ./result"
+            echo "Error: ISO file not found in ./result" >&2
             exit 1
           fi
           echo "Found ISO: $ISO_FILE"
