@@ -15,33 +15,12 @@
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   outputs = { self, nixpkgs }: {
-    packages.x86_64-linux.default = let
-      # Get pkgs specific to the system (x86_64-linux)
-      pkgs = import nixpkgs { system = "x86_64-linux"; };
-      isoImageDerivation =
-        self.nixosConfigurations.repairis.config.system.build.isoImage;
-      isoFileName = "Repairis-${self.shortRev or "dirty"}.iso";
-    in pkgs.runCommand isoFileName {
-      inherit isoImageDerivation;
-      nativeBuildInputs = [ pkgs.coreutils ];
-    } ''
-      # Find the actual .iso file within the derivation output
-      isoPath=$(find "$isoImageDerivation" -name "*.iso" | head -n 1)
-      if [ -z "$isoPath" ]; then
-        echo "Error: Could not find ISO image in $isoImageDerivation" >&2
-        exit 1
-      fi
-      cp "$isoPath" "$out/${isoFileName}"
-    '';
+    packages.x86_64-linux.default =
+      self.nixosConfigurations.repairis.config.system.build.isoImage;
     nixosConfigurations = {
       repairis = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [ ./configuration.nix ];
-        specialArgs = {
-          inherit self; # Make `self` available to modules
-          isoVersion =
-            self.shortRev or "dirty"; # Pass the short commit hash or "dirty"
-        };
       };
     };
   };

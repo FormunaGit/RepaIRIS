@@ -31,16 +31,24 @@ jobs:
       - name: Build ISO and Push to Cachix
         run: nix build path:$PWD | cachix push repairis
 
-      - name: Find ISO file
+      - name: Find and Rename ISO file
         id: find_iso
         run: |
-          ISO_FILE=$(find ./result/iso -name "*.iso" -print -quit)
-          if [ -z "$ISO_FILE" ]; then
-            echo "Error: ISO file not found in ./result" >&2
+          SHORT_COMMIT=$(echo "${GITHUB_SHA::7}")
+          ORIGINAL_ISO_PATH=$(find ./result/iso -name "*.iso" -print -quit)
+          NEW_ISO_FILENAME="Repairis-${SHORT_COMMIT}.iso"
+          TEMP_ISO_DIR="./temp-iso-output"
+          FINAL_ISO_PATH="$TEMP_ISO_DIR/$NEW_ISO_FILENAME"
+
+          if [ -z "$ORIGINAL_ISO_PATH" ]; then
+            echo "Error: ISO file not found in ./result/iso"
             exit 1
           fi
-          echo "Found ISO: $ISO_FILE"
-          echo "iso_path=$ISO_FILE" >> "$GITHUB_OUTPUT"
+
+          mkdir -p "$TEMP_ISO_DIR"
+          cp "$ORIGINAL_ISO_PATH" "$FINAL_ISO_PATH"
+          echo "Copied and renamed ISO to $FINAL_ISO_PATH"
+          echo "iso_path=$FINAL_ISO_PATH" >> "$GITHUB_OUTPUT"
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
