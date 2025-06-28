@@ -1,0 +1,50 @@
+name: Build Repairis ISO with Nix
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Configure Cachix
+        uses: cachix/cachix-action@v14
+        with:
+          name: repairis
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Build ISO and Push to Cachix
+        run: nix build path:$PWD | cachix push repairis
+
+      - name: Find ISO file
+        id: find_iso
+        run: |
+          ISO_FILE=$(find ./result -name "*.iso" -print -quit)
+          if [ -z "$ISO_FILE" ]; then
+            echo "Error: ISO file not found in ./result"
+            exit 1
+          fi
+          echo "Found ISO: $ISO_FILE"
+          echo "iso_path=$ISO_FILE" >> "$GITHUB_OUTPUT"
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-iso-output
+          path: ${{ steps.find_iso.outputs.iso_path }}
+          retention-days: 7
