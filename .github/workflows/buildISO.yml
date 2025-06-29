@@ -57,3 +57,15 @@ jobs:
           name: Repairis-${{ steps.find_iso.outputs.short_commit }}
           path: ${{ steps.find_iso.outputs.iso_path }}
           retention-days: 7
+
+      - name: Create Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: repairis-${{ steps.find_iso.outputs.short_commit }}
+          name: Repairis ISO Release ${{ steps.find_iso.outputs.short_commit }}
+          body: |
+            Automated release of Repairis ISO.
+            This release contains the Repairis Live ISO image.
+            Built from commit: ${{ github.sha }}
+          files: ${{ steps.find_iso.outputs.iso_path }}
