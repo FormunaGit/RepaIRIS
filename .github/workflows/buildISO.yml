@@ -12,6 +12,8 @@ on:
 jobs:
   build-iso:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -64,8 +66,8 @@ jobs:
         with:
           tag_name: repairis-${{ steps.find_iso.outputs.short_commit }}
           name: Repairis ISO Release ${{ steps.find_iso.outputs.short_commit }}
-          body: |
+          body: |-
             Automated release of Repairis ISO.
             This release contains the Repairis Live ISO image.
             Built from commit: ${{ github.sha }}
-          files: ${{ steps.find_iso.outputs.iso_path }}
+            Find the ISO artifact for this release at: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
