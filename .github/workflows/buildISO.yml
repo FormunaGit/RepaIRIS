@@ -65,9 +65,9 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: repairis-${{ steps.find_iso.outputs.short_commit }}
-          name: Repairis ISO Release ${{ steps.find_iso.outputs.short_commit }}
+          name: RepaIRIS ISO Release ${{ steps.find_iso.outputs.short_commit }}
           body: |-
-            Automated release of Repairis ISO.
-            This release contains the Repairis Live ISO image.
-            Built from commit: ${{ github.sha }}
-            Find the ISO artifact for this release at: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            This release contains the RepaIRIS Live ISO image.
+            Built from commit ${{ github.sha }}
+            # You're probably looking for this link!! ↆↆↆↆↆↆↆ
+            Download the ISO artifact for this release at: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
